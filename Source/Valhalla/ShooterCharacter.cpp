@@ -4,6 +4,9 @@
 #include "ShooterCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0f)
@@ -21,6 +24,14 @@ AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0
     followCamera->SetupAttachment(cameraArm, USpringArmComponent::SocketName);
     //Only change for spring arm, camera should not rotate relative to arm
     followCamera->bUsePawnControlRotation = false;
+    bUseControllerRotationPitch = false;
+    bUseControllerRotationYaw = false;
+    bUseControllerRotationRoll = false;
+    //Configure Char Movement
+    GetCharacterMovement()->bOrientRotationToMovement = true; // Char move in input direction
+    GetCharacterMovement()->RotationRate = FRotator(0.0f,540.0f,0.0f);
+    GetCharacterMovement()->JumpZVelocity = 600.0f;
+    GetCharacterMovement()->AirControl = 0.2f;
 }
 
 // Called when the game starts or when spawned
@@ -51,6 +62,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAxis("Turn",this,&APawn::AddControllerYawInput);
     PlayerInputComponent->BindAction("Jump",IE_Pressed,this,&ACharacter::Jump);
     PlayerInputComponent->BindAction("Jump",IE_Released,this,&ACharacter::StopJumping);
+    PlayerInputComponent->BindAction("FireButton",IE_Pressed,this,&AShooterCharacter::fireWeapon);
 }
 // Back and forward movement
 void AShooterCharacter::moveForward(float val)
@@ -85,3 +97,8 @@ void AShooterCharacter::lookupAtRate(float rate)
     AddControllerPitchInput(rate * baseLookupRate * GetWorld()->GetDeltaSeconds());
 }
 
+void AShooterCharacter::fireWeapon(){
+    if(fireShot){
+        UGameplayStatics::PlaySound2D(this,fireShot);
+    }
+}

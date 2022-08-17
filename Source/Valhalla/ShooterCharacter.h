@@ -22,6 +22,7 @@ protected:
     void moveRight(float val);
     void turnAtRate(float rate);
     void lookupAtRate(float rate);
+    void fireWeapon();
 
 public:	
 	// Called every frame
@@ -40,6 +41,8 @@ private:
     float baseTurnRate;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
     float baseLookupRate;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    class USoundCue* fireShot;
     
     
     
