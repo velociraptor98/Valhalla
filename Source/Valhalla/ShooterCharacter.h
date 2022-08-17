@@ -43,7 +43,11 @@ private:
     float baseLookupRate;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
     class USoundCue* fireShot;
-    
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    class UParticleSystem* muzzleFlash;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    class UAnimMontage* fireMontage;
+
     
     
     

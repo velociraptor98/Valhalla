@@ -7,6 +7,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Particles/ParticleSystem.h"
+#include "Animation/AnimMontage.h"
+
+
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0f)
@@ -100,5 +105,17 @@ void AShooterCharacter::lookupAtRate(float rate)
 void AShooterCharacter::fireWeapon(){
     if(fireShot){
         UGameplayStatics::PlaySound2D(this,fireShot);
+    }
+    const USkeletalMeshSocket* barrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+    if(barrelSocket){
+        const FTransform socketTransform = barrelSocket->GetSocketTransform(GetMesh());
+        if(muzzleFlash){
+            UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),muzzleFlash, socketTransform);
+        }
+    }
+    UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
+    if(animInstance && fireMontage){
+        animInstance->Montage_Play(fireMontage);
+        animInstance->Montage_JumpToSection(FName("StartFire"));
     }
 }
