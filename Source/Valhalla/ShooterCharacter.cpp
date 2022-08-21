@@ -9,7 +9,9 @@
 #include "Sound/SoundCue.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Animation/AnimMontage.h"
+#include "DrawDebugHelpers.h"
 
 
 
@@ -23,6 +25,7 @@ AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0
     cameraArm->TargetArmLength = 300.0f;
     //When camera moves use that rotation
     cameraArm->bUsePawnControlRotation = true;
+    cameraArm->SocketOffset = FVector(0.0f,50.0f,50.0f);
     
     // Setup Camera
     followCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
@@ -30,10 +33,10 @@ AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0
     //Only change for spring arm, camera should not rotate relative to arm
     followCamera->bUsePawnControlRotation = false;
     bUseControllerRotationPitch = false;
-    bUseControllerRotationYaw = false;
+    bUseControllerRotationYaw = true;
     bUseControllerRotationRoll = false;
     //Configure Char Movement
-    GetCharacterMovement()->bOrientRotationToMovement = true; // Char move in input direction
+    GetCharacterMovement()->bOrientRotationToMovement = false; // Char move in input direction
     GetCharacterMovement()->RotationRate = FRotator(0.0f,540.0f,0.0f);
     GetCharacterMovement()->JumpZVelocity = 600.0f;
     GetCharacterMovement()->AirControl = 0.2f;
@@ -111,6 +114,28 @@ void AShooterCharacter::fireWeapon(){
         const FTransform socketTransform = barrelSocket->GetSocketTransform(GetMesh());
         if(muzzleFlash){
             UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),muzzleFlash, socketTransform);
+        }
+        FHitResult fireHit;
+        const FVector start{socketTransform.GetLocation()};
+        const FQuat rotation{socketTransform.GetRotation()};
+        const FVector rotationAxis{rotation.GetAxisX()};
+        const FVector end{start+rotationAxis * 50000.0f};
+        FVector beamEndPoint{end};
+        GetWorld()->LineTraceSingleByChannel(fireHit, start, end,ECollisionChannel::ECC_Visibility);
+        if (fireHit.bBlockingHit){
+//            DrawDebugLine(GetWorld(), start, end,FColor::Red, false, 2.0f);
+//            DrawDebugPoint(GetWorld(), fireHit.Location,5.0f,FColor::Red,false,2.0f);
+            if(impactParticles){
+                UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),impactParticles, fireHit.Location);
+            }
+            beamEndPoint = fireHit.Location;
+          
+        }
+        if(beamParticles){
+            UParticleSystemComponent* beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),beamParticles,socketTransform);
+            if(beam){
+                beam->SetVectorParameter(FName("Target"),beamEndPoint);
+            }
         }
     }
     UAnimInstance* animInstance = GetMesh()->GetAnimInstance();

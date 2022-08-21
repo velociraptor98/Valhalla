@@ -47,6 +47,10 @@ private:
     class UParticleSystem* muzzleFlash;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
     class UAnimMontage* fireMontage;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    UParticleSystem* impactParticles;
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    UParticleSystem* beamParticles;
 
     
     
