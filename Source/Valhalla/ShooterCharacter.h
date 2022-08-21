@@ -24,6 +24,8 @@ protected:
     void lookupAtRate(float rate);
     void fireWeapon();
     bool getBeamEndLocation(const FVector& muzzleSocketLocation,FVector& outBeamLocation);
+    void aimButtonPressed();
+    void aimButtonReleased();
 
 public:	
 	// Called every frame
@@ -52,6 +54,8 @@ private:
     UParticleSystem* impactParticles;
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapons",meta = (AllowPrivateAccess = "true"))
     UParticleSystem* beamParticles;
+    UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = "Weapons",meta = (AllowPrivateAccess = "true"))
+    bool bAiming;
 
     
     

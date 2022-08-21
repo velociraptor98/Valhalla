@@ -16,7 +16,7 @@
 
 
 // Sets default values
-AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0f)
+AShooterCharacter::AShooterCharacter() : baseTurnRate(45.0f),baseLookupRate(45.0f),bAiming(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -115,32 +115,6 @@ void AShooterCharacter::fireWeapon(){
         if(muzzleFlash){
             UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),muzzleFlash, socketTransform);
         }
-//        if(bScreenToWorld){
-//            FHitResult screenTraceHit;
-//            const FVector start{crosshairWorldPosition};
-//            const FVector end{crosshairWorldPosition + crosshairWorldDirection * 50000.0f};
-//            FVector beamEndPoint{end};
-//            GetWorld()->LineTraceSingleByChannel(screenTraceHit,start,end,ECollisionChannel::ECC_Visibility);
-//            if(screenTraceHit.bBlockingHit){
-//                beamEndPoint = screenTraceHit.Location;
-//                FHitResult weaponTraceHit;
-//                const FVector weaponTraceStart{socketTransform.GetLocation()};
-//                const FVector weaponTraceEnd{beamEndPoint};
-//                GetWorld()->LineTraceSingleByChannel(weaponTraceHit,weaponTraceStart,weaponTraceEnd,ECollisionChannel::ECC_Visibility);
-//                if(weaponTraceHit.bBlockingHit){
-//                    beamEndPoint = weaponTraceHit.Location;
-//                }
-//                if(impactParticles){
-//                    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),impactParticles, screenTraceHit.Location);
-//                }
-//                if(beamParticles){
-//                    UParticleSystemComponent* beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),beamParticles,socketTransform);
-//                    if(beam){
-//                        beam->SetVectorParameter(FName("Target"),beamEndPoint);
-//                    }
-//                }
-//            }
-//        }
         FVector beamEnd;
         bool bBeamEnd = getBeamEndLocation(socketTransform.GetLocation(),beamEnd);
         if(bBeamEnd){
@@ -191,4 +165,11 @@ bool AShooterCharacter::getBeamEndLocation(const FVector& muzzleSocketLocation,F
         return true;
     }
     return false;
+}
+
+void AShooterCharacter::aimButtonPressed(){
+    bAiming = true;
+}
+void AShooterCharacter::aimButtonReleased(){
+    bAiming = false;
 }
