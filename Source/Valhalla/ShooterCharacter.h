@@ -23,6 +23,7 @@ protected:
     void turnAtRate(float rate);
     void lookupAtRate(float rate);
     void fireWeapon();
+    bool getBeamEndLocation(const FVector& muzzleSocketLocation,FVector& outBeamLocation);
 
 public:	
 	// Called every frame
