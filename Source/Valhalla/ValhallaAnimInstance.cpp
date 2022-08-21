@@ -4,6 +4,7 @@
 #include "ValhallaAnimInstance.h"
 #include "ShooterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UValhallaAnimInstance::NativeInitializeAnimation()
 {
@@ -26,5 +27,12 @@ void UValhallaAnimInstance::updateAnimationProperties(float deltaTime)
         else{
             bIsAccelerating = false;
         }
+        FRotator aimRotation = shooterCharacter->GetBaseAimRotation();
+        FRotator movementRotation = UKismetMathLibrary::MakeRotFromX(shooterCharacter->GetVelocity());
+        movementOffset = UKismetMathLibrary::NormalizedDeltaRotator(movementRotation,aimRotation).Yaw;
+//        FString rotationMessage = FString::Printf(TEXT("Base aim rotation: %f"),movementOffset);
+//        if(GEngine){
+//            GEngine->AddOnScreenDebugMessage(1,0.0f,FColor::White,rotationMessage);
+//        }
     }
 }
